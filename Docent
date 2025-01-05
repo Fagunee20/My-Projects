@@ -1,0 +1,56 @@
+package asl3;
+
+
+import asl3.interfaces.I_Course;
+import asl3.interfaces.I_Docent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Docent implements I_Docent 
+{
+    private String d_firstname;
+    private String d_surname;
+    private String d_email;
+    private List<String> crs;   // list of courses the docent can teach.
+
+    public Docent()
+    {}
+
+    public Docent(String firstName, String surname, String email)
+    {
+        this.d_firstname=firstName;
+        this.d_surname=surname;
+        this.d_email=email;
+        this.crs= new ArrayList<String>();
+    }
+    @Override
+    public String getFirstName() 
+    {
+        return this.d_firstname;
+    }
+
+    @Override
+    public String getSurname() 
+    {
+        return this.d_surname;
+    }
+
+    @Override
+    public String getEmail() 
+    {
+        return this.d_email;
+    }
+
+    @Override
+    public void addCourse(String courseName) //  Add course name to the course list that the Docent can teach
+    {
+            this.crs.add(courseName);
+    }
+
+    @Override
+    public List<String> getCourses() 
+    {
+        return this.crs;
+    }
+}
