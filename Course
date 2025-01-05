@@ -1,0 +1,68 @@
+package asl3;
+
+import asl3.interfaces.I_Course;
+import asl3.interfaces.I_Docent;
+
+public class Course implements I_Course 
+{
+    private String course_name;
+    private int CP;
+    private I_Docent course_docent;
+    boolean pass= true;
+
+    public Course()
+    {}
+
+    public Course(String name, int cp)
+    {
+        this.course_name=name;
+        this.CP=cp;
+        this.course_docent=new Docent();
+    }
+
+    @Override
+    public String getName() 
+    {
+        return this.course_name;
+    }
+
+    @Override
+    public int getCP() 
+    {
+        return this.CP;
+    }
+
+    @Override
+    public boolean setDocent(I_Docent docent) 
+    { 
+        if(docent!= null)
+        {
+            for(int i=0;i< course_docent.getCourses().size();i++)
+            {
+                if(course_docent.getCourses().get(i).equals(this.getName()))  //check if the docent can teach the course
+                {
+                    this.course_docent=docent;
+                }
+            }
+            return true;
+        }
+            else
+            {
+                return false;
+            }
+      
+    }
+
+    @Override
+    public void removeDocent() 
+    {
+        this.course_docent=null;
+
+    }
+
+    @Override
+    public I_Docent getDocent() 
+    {
+        return course_docent;
+    }
+}
