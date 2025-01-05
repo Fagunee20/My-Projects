@@ -1,0 +1,251 @@
+package asl3;
+
+import asl3.interfaces.I_Course;
+import asl3.interfaces.I_Docent;
+import asl3.interfaces.I_Student;
+import asl3.interfaces.I_University;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+
+public class University implements I_University 
+{
+    private String uni_name;
+    private List<I_Docent> docents;
+    private List<I_Course> Courses;
+    private List<I_Student> students;
+    public int student_count;
+
+
+    public University()
+    {}
+    public University(String name)
+    {
+            this.uni_name=name;
+            this.docents=new ArrayList<>(); // list of docents added to the university
+            this.Courses=new ArrayList<>(); // list of courses provided by the university
+            this.students=new ArrayList<>();// list of students in the university
+            this.student_count=0;
+    }
+    @Override
+    public boolean addDocent(I_Docent docent) 
+    {
+        if(docents.contains(docent))
+        {
+            return false;
+        }
+        else
+        {
+            docents.add(docent);
+            return true; 
+        }
+    }
+
+    @Override
+    public I_Docent getDocent(String firstName, String surname) 
+    {
+        I_Docent DC=new Docent();
+        if(DC.getFirstName().equals(firstName)&& DC.getSurname().equals(surname))
+        {
+            return DC;
+
+        }
+        else
+        {
+            return null ; 
+        }
+        
+    }
+
+    @Override
+    public List<I_Docent> getListOfDocents() 
+    {
+        return Collections.unmodifiableList(docents);
+    }
+
+    @Override
+    public I_Course addCourse(String name, int cp) 
+    {
+        I_Course newcourse=new Course(name, cp);  // passing the details of the new course
+        this.Courses.add(newcourse);
+        return newcourse;
+    }
+
+    @Override
+    public I_Course getCourse(String name) 
+    {
+        I_Course course=new Course();
+        if(course.getName().equals(name))
+        {
+            return course;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+    public List<I_Course> getListOfCourses() 
+    {
+        return Collections.unmodifiableList(Courses);
+    }
+
+    @Override
+    public List<I_Course> getListOfEmptyCourses() 
+    {
+        List<I_Course> emptyCourses=new ArrayList<>();
+        for(I_Course course : Courses)
+        {
+            if(course.getDocent()==null)   // checking if the course has any docent.
+            {
+                emptyCourses.add(course);
+            }
+        }
+        return emptyCourses;
+    }
+
+    @Override
+    public I_Student addStudent(String firstName, String surname, String email, String ID) 
+    {
+        Student new_student=new Student(firstName, surname, email,ID);
+        student_count++;
+        this.students.add(new_student);
+        return new_student;
+    }
+
+    @Override
+    public boolean removeStudent(I_Student student) 
+    {
+        if(students.contains(student))
+        {
+            students.remove(student);
+            return true;
+        }
+        else
+        {
+            return false ;
+        }
+    }
+
+    @Override
+    public I_Student getStudent(String firstName, String surname) 
+    {
+        if(firstName==""|| surname=="")
+        {
+            throw new NullPointerException(" First name and sur name cannot be null");
+            
+        }
+        for(I_Student ST: students)
+        {
+            if(ST.getFirstName().equals(firstName) && ST.getSurname().equals(surname))
+            {
+                return ST;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<I_Student> getListOfStudents() 
+    {
+        return new ArrayList<>(students);
+    }
+
+    @Override
+    public void distributeCourses()     // to distribute courses to the docents.
+    {
+        for(I_Course cr:this.Courses)
+        {
+            cr.removeDocent();      // removing docent of all the courses.
+        }
+
+        // Distribute courses to Docents
+        for(I_Course cr : this.Courses)
+        {
+            I_Docent bestDocent=null;
+            for(I_Docent docent : docents)
+            {
+                if(docent.getCourses().contains(cr) && (bestDocent== null || docent.getCourses().size()< bestDocent.getCourses().size()))
+                {
+                    bestDocent=docent;
+                }
+                if(bestDocent!= null)
+                {
+                    cr.setDocent(bestDocent);
+                    bestDocent.addCourse(cr.getName());
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<I_Student> getStudentsByGrade(List<I_Course> courses) 
+    {
+        List<I_Student>student_by_grade =new ArrayList<>(); // creating an arraylist to store the lsit of students.
+        for(I_Course course_iteratoCourse: courses)
+        {
+            for(I_Student studt: this.students)
+            {
+                if(studt.getCourses().contains(course_iteratoCourse) && (studt.getNumberOfFailedAttempts(course_iteratoCourse)==0)) // to check if the student takes that course .
+                {
+                    student_by_grade.add(studt);
+                }
+            }
+        }
+        for (int i = 0; i < student_by_grade.size(); i++) 
+        {
+            for (int j = student_by_grade.size() - 1; j > i; j--) 
+            {
+                if (student_by_grade.get(i).getAverageGrade() > student_by_grade.get(j).getAverageGrade()) 
+                {
+                    I_Student tmp = student_by_grade.get(i);
+                    student_by_grade.set(i,student_by_grade.get(j));
+                    student_by_grade.set(j,tmp);
+                }
+            }
+            
+        }
+
+        return student_by_grade;
+    }
+
+    @Override
+    public double getAverageGradeOfCourse(I_Course course) 
+    {
+        I_Student ST=new Student();
+        double sum=0;
+        int count=0;
+        double avg=0;
+        for(I_Course c : this.Courses)
+        {
+            if(ST.getNumberOfFailedAttempts(c)==0)
+            {
+                sum+= ST.getAverageGrade(); 
+                count++;
+            }
+        }
+        avg=sum/count;
+        return avg;
+    }
+
+    @Override
+    public List<I_Course> getCoursesByFailureRate() 
+    {
+        List<I_Course> courseswithFailureRate= new ArrayList<>();
+        for(I_Course course : this.getListOfCourses())
+        {
+            for(I_Student ST: this.students)
+            {
+                if(ST.getNumberOfFailedAttempts(course)!=0)
+                {
+                    courseswithFailureRate.add(course);
+                }
+            }
+        }
+        return courseswithFailureRate;
+    
+    }
+}
