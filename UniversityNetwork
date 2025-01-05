@@ -1,0 +1,64 @@
+package asl3;
+
+import asl3.interfaces.I_Student;
+import asl3.interfaces.I_University;
+import asl3.interfaces.I_UniversityNetwork;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class UniversityNetwork implements I_UniversityNetwork 
+{
+    private List<I_University> uni_Network;
+
+    public UniversityNetwork()
+    {
+        this.uni_Network=new ArrayList<>();
+    }
+    @Override
+    public boolean registerUniversity(I_University university) 
+    {
+        if(this.uni_Network!=null)
+        {
+            this.uni_Network.add(university);
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+    }
+
+    @Override
+    public List<I_University> getUniversityByStudentCount() 
+    {
+        List<I_University> getUni_students= new ArrayList<>();
+
+        for (int i = 0; i < uni_Network.size(); i++) 
+        {
+            for (int j = uni_Network.size() - 1; j > i; j--) 
+            {
+                if (this.uni_Network.get(i).getListOfStudents().size() >this.uni_Network.get(j).getListOfStudents().size()) 
+                {
+                    I_University tmp = getUni_students.get(i);
+                    getUni_students.set(i,getUni_students.get(j));
+                    getUni_students.set(j,tmp);
+                }
+            }
+        }
+        return getUni_students ;
+    }
+
+    @Override
+    public List<I_University> getUniversityByCoveredCourses() 
+    {
+        List<I_University> getUni_courses= new ArrayList<>();
+        University I =new University();
+        if(I.getListOfEmptyCourses()!=null)
+        {
+            getUni_courses.add(I);
+        }
+
+        return getUni_courses;
+    }
+}
