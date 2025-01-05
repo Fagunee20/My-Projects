@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="formApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS Form Example</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+    <header></header>
+<section ng-controller="FormController">
+        <h2>Registration Form</h2>
+        <form name="registrationForm" ng-submit="submitForm()" novalidate>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name"placeholder="Enter your full name" ng-model="user.name" required>
+            <div ng-show="registrationForm.$submitted && !user.name" class="error">
+                Name is required.
+            </div>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email"placeholder="Enter your email id" ng-model="user.email" required>
+            <div ng-show="registrationForm.$submitted && !user.email" class="error">
+                Valid email is required.
+            </div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" ng-model="user.password" required minlength="6">
+            <div ng-show="registrationForm.$submitted && (registrationForm.password.$error.required || registrationForm.password.$error.minlength)" class="error">
+                Password is required (minimum 6 characters).
+            </div>
+
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" ng-model="user.confirmPassword" required>
+            <div ng-show="registrationForm.$submitted && user.password !== user.confirmPassword" class="error">
+                Passwords do not match.
+            </div>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" ng-model="user.dob" required>
+            <div ng-show="registrationForm.$submitted && !user.dob" class="error">
+                Date of birth is required.
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+        <br>
+
+        <div ng-show="formSubmitted" class="success">
+            <h3>Thank you for registering, {{ user.name }}!</h3>
+            <p>Email: {{ user.email }}</p>
+            <p>Date of Birth: {{ user.dob | date }}</p>
+        </div>
+    </section>
+</body>
+</html>
