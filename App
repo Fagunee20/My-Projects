@@ -1,0 +1,23 @@
+const app = angular.module('formApp', []);
+
+app.controller('FormController', function ($scope, $http) {
+    $scope.user = {};
+    $scope.formSubmitted = false;
+
+    $scope.submitForm = function () {
+        if ($scope.registrationForm.$valid) {
+            $http.post('http://localhost:3000/register', $scope.user)
+                .then(function (response) {
+                    console.log('Success:', response.data);
+                    $scope.formSubmitted = true;
+                })
+                .catch(function (error) {
+                    console.error('Error:', error.data || 'Unknown error occurred.');
+                    alert('An error occurred. Please try again.');
+                });
+        } else {
+            console.log('Form is invalid.');
+        }
+    };
+});
+
