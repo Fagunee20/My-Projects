@@ -1,0 +1,149 @@
+package asl3;
+
+import asl3.interfaces.I_Course;
+import asl3.interfaces.I_Student;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Student implements I_Student
+{  
+    private String firstname;
+    private String surname;
+    private String Email;
+    private String StudentID;
+    private Map<I_Course,String> courses;  // map for storing courses
+    private int failed_attempts;    // to count number of failed attempts
+    Course student_course=new Course();
+    boolean course_pass= true;
+
+    public Student() 
+    {}
+
+
+    public Student(String firstName, String surname, String email, String studentID) // constructor for initialising passed values.
+    {
+        this.firstname=firstName;
+        this.surname=surname;
+        this.Email=email;
+        this.StudentID=studentID;
+        this.courses= new HashMap<I_Course,String>();
+        this.failed_attempts=0;
+    }
+    @Override
+    public void addCourse(I_Course course, String grade) // add course to the student
+    {
+        if(!courses.containsKey(course))
+        {
+            courses.put(course, grade);
+            if(grade.equals("5.0"))
+            {
+                course_pass=false; // change the course result to false
+                this.failed_attempts++;
+            }
+        }
+    }
+    
+
+    @Override
+    public String getFirstName() 
+    {
+        return this.firstname;
+    }
+
+    @Override
+    public String getSurname() 
+    {
+        return this.surname;
+    }
+
+    @Override
+    public String getEmail() 
+    {
+        return this.Email;
+    }
+
+    @Override
+    public String getStudentID() 
+    {
+        return this.StudentID;
+    }
+
+    @Override
+    public List<I_Course> getCourses()  // returns the list of courses taken by the student
+    {
+        return new ArrayList<>(courses.keySet());
+    }
+
+    @Override
+    public String getGradeInCourse(I_Course course) 
+    {
+            if(this.getCourses().contains(course)==true)
+            {
+                return courses.get(course); // returning the value at given value key in the map.
+            }
+            else
+            {
+                return "0";
+            }
+        
+    }
+        
+    
+
+    @Override
+    public Integer getNumberOfFailedAttempts(I_Course course) 
+    {
+        if(this.getCourses().contains(course)==true)
+        {
+                return this.failed_attempts;
+        }
+        else
+        {
+                return 0;
+        }
+    }
+    
+
+    @Override
+    public int getReachedCP() 
+    {
+        int sum=0;
+        for(Map.Entry<I_Course,String> m : courses.entrySet())    
+        {
+            if(m.getValue()!="5.0") // accessing grade achieved in the course
+            {
+                sum= sum+student_course.getCP(); // adding the credit points
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        return sum;
+    }
+
+    @Override
+    public double getAverageGrade() 
+    {
+        int sum=0;
+        int count=0;
+        for(Map.Entry<I_Course,String> m : courses.entrySet())    
+        {
+            if(m.getValue()!="5.0")
+            {
+                sum= sum+student_course.getCP();
+                count++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+        int Avg= sum/count;
+        return Avg;
+    }
+}
